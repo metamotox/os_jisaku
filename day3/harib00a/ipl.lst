@@ -1,0 +1,76 @@
+     1                                  ; haribote-ipl
+     2                                  ; TAB=4
+     3                                  
+     4                                  	ORG		0x7c00
+     5                                  
+     6 00000000 EB4E                    	JMP		entry
+     7 00000002 90                      	DB		0x90
+     8 00000003 48415249424F5445        	DB		"HARIBOTE"
+     9 0000000B 0002                    	DW		512
+    10 0000000D 01                      	DB		1
+    11 0000000E 0100                    	DW		1
+    12 00000010 02                      	DB		2
+    13 00000011 E000                    	DW		224
+    14 00000013 400B                    	DW		2880
+    15 00000015 F0                      	DB		0xf0
+    16 00000016 0900                    	DW		9
+    17 00000018 1200                    	DW		18
+    18 0000001A 0200                    	DW		2
+    19 0000001C 00000000                	DD		0
+    20 00000020 400B0000                	DD		2880
+    21 00000024 000029                  	DB		0,0,0x29
+    22 00000027 FFFFFFFF                	DD		0xffffffff
+    23 0000002B 48415249424F54454F-     	DB		"HARIBOTEOS "
+    24 00000034 5320               
+    25 00000036 4641543132202020        	DB		"FAT12   "
+    26 0000003E 00<rept>                	TIMES	18	DB	0x00
+    27                                  
+    28                                  ; main program
+    29                                  
+    30                                  entry:
+    31 00000050 B80000                  	MOV		AX,0
+    32 00000053 8ED0                    	MOV		SS,AX
+    33 00000055 BC007C                  	MOV		SP,0x7c00
+    34 00000058 8ED8                    	MOV		DS,AX
+    35                                  
+    36                                  ; reading disk
+    37 0000005A B82008                  	MOV		AX,0x0820
+    38 0000005D 8EC0                    	MOV		ES,AX
+    39 0000005F B500                    	MOV		CH,0		; cylinder=0
+    40 00000061 B600                    	MOV		DH,0		; head=0
+    41 00000063 B102                    	MOV		CL,2		; sector=2
+    42                                  
+    43 00000065 B402                    	MOV		AH,0x02		; AH=0x02 : reading disk operation
+    44 00000067 B001                    	MOV		AL,1		; 1 sector
+    45 00000069 BB0000                  	MOV		BX,0
+    46 0000006C B200                    	MOV		DL,0x00		; target : A drive
+    47 0000006E CD13                    	INT		0x13
+    48 00000070 7203                    	JC		error
+    49                                  
+    50                                  fin:
+    51 00000072 F4                      	HLT
+    52 00000073 EBFD                    	JMP		fin
+    53                                  
+    54                                  error:
+    55 00000075 BE[8A00]                	MOV		SI,msg
+    56                                  
+    57                                  putloop:
+    58 00000078 8A04                    	MOV		AL,[SI]
+    59 0000007A 83C601                  	ADD		SI,1
+    60 0000007D 3C00                    	CMP		AL,0
+    61 0000007F 74F1                    	JE		fin
+    62 00000081 B40E                    	MOV		AH,0x0e		; 1 character display function
+    63 00000083 BB0F00                  	MOV		BX,15		; color code
+    64 00000086 CD10                    	INT		0x10		; video BIOS call
+    65 00000088 EBEE                    	JMP		putloop
+    66                                  
+    67                                  msg:
+    68 0000008A 0A0A                    	DB		0x0a, 0x0a
+    69 0000008C 6E6F206472696E6B2C-     	DB		"no drink, no life!"
+    70 00000095 206E6F206C69666521 
+    71 0000009E 0A                      	DB		0x0a
+    72 0000009F 00                      	DB		0
+    73                                  
+    74 000000A0 00<rept>                	TIMES	0x7dfe-0x7c00-($-$$)	DB	0x00
+    75 000001FE 55AA                    	DB		0x55, 0xaa
+    76                                  

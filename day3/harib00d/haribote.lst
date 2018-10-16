@@ -1,0 +1,8 @@
+     1                                  ; haribote-os
+     2                                  ; TAB=4
+     3                                  
+     4                                  	ORG		0xc200
+     5                                  
+     6                                  fin:
+     7 00000000 F4                      	HLT
+     8 00000001 EBFD                    	JMP		fin

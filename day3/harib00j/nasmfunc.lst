@@ -1,0 +1,18 @@
+     1                                  ; nasmfunc
+     2                                  ; TAB=4
+     3                                  
+     4                                  ; [FORMAT "WCOFF"]		; the mode creating object file
+     5                                  [BITS 32]			; 32 bit mode machine code
+     6                                  
+     7                                  ; information for object file
+     8                                  
+     9                                  ; [FILE "nasmfunc.nas"]		; source file information
+    10                                  
+    11                                  	GLOBAL	io_hlt		; function name that contains this program
+    12                                  
+    13                                  ; program in the io_hlt
+    14                                  
+    15                                  [SECTION .text]			; write this description at first
+    16                                  io_hlt:				; void io_hlt(void)
+    17 00000000 F4                      	HLT
+    18 00000001 C3                      	RET
